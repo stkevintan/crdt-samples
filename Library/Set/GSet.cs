@@ -1,4 +1,4 @@
-namespace CRDT.Set
+namespace CRDT.Library.Set
 {
     public class GSet<T>
     {

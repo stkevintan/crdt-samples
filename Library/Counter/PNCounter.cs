@@ -1,8 +1,9 @@
-namespace CRDT.Counter
+namespace CRDT.Library.Counter
 {
     public class PNCounter
     {
         private readonly GCounter _positive;
+        // tombstone
         private readonly GCounter _negative;
 
         public PNCounter()

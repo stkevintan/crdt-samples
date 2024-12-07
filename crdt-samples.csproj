@@ -2,10 +2,14 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net9.0</TargetFramework>
-    <RootNamespace>crdt_samples</RootNamespace>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>CRDT</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ExtendedNumerics.BigRational" Version="3000.0.1.326" />
+  </ItemGroup>
 
 </Project>
