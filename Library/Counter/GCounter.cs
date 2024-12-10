@@ -36,6 +36,5 @@ namespace CRDT.Library.Counter
                 };
             }
         }
-
     }
 }

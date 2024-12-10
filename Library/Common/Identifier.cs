@@ -4,9 +4,10 @@ using ExtendedNumerics;
 
 namespace CRDT.Library.Common
 {
-    public record Identifier<T>(List<(BigRational, T)> Nodes) : IComparable<Identifier<T>> where T : notnull, IComparable<T>
+    public record Identifier<T>(List<(BigRational, T)> Nodes) : IComparable<Identifier<T>> where T : IComparable<T>
     {
         public T Value => Nodes.Last().Item2;
+
         public int CompareTo(Identifier<T>? other)
         {
             if (other == null)
@@ -85,7 +86,8 @@ namespace CRDT.Library.Common
             {
                 var curLow = lowIter.Next();
                 var curHigh = highIter.Next();
-                if (curLow is Some<(BigRational, T)>(var lowPair) && curHigh is Some<(BigRational, T)>(var highPair) && lowPair.Item1 == highPair.Item1)
+                if (curLow is Some<(BigRational, T)>(var lowPair) && curHigh is Some<(BigRational, T)>(var highPair) &&
+                    lowPair.Item1 == highPair.Item1)
                 {
                     if (lowPair.Item2.CompareTo(marker) < 0 && marker.CompareTo(highPair.Item2) < 0)
                     {
@@ -120,15 +122,15 @@ namespace CRDT.Library.Common
                     };
 
                     nodes.Add((RBetween(
-                            new Some<BigRational>(lowId),
-                            new Some<BigRational>(highId)),
-                        marker)
+                                new Some<BigRational>(lowId),
+                                new Some<BigRational>(highId)),
+                            marker)
                     );
                     break;
                 }
             }
+
             return new Identifier<T>(nodes);
         }
     }
 }
-

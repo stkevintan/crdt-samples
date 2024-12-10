@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CRDT.Library.Sequence
 {
-    public class GSequence<T> where T: notnull, IComparable<T>
+    public class GSequence<T> where T : notnull, IComparable<T>
     {
         private readonly SortedSet<Identifier<T>> list = new();
 
@@ -42,18 +42,21 @@ namespace CRDT.Library.Sequence
             {
                 throw new IndexOutOfRangeException();
             }
+
             if (index == 0)
             {
                 return InsertBefore(TryGetIdentifier(index), value);
             }
+
             return InsertAfter(TryGetIdentifier(index - 1), value);
         }
 
-        public Identifier<T> InsertBefore(IOption<Identifier<T>>highId, T value)
+        public Identifier<T> InsertBefore(IOption<Identifier<T>> highId, T value)
         {
             var lowId = highId switch
             {
-                Some<Identifier<T>>(var hid) => list.GetViewBetween(list.Min, hid).Reverse().FirstOrDefault(id => id?.CompareTo(hid) < 0, null),
+                Some<Identifier<T>>(var hid) => list.GetViewBetween(list.Min, hid).Reverse()
+                    .FirstOrDefault(id => id?.CompareTo(hid) < 0, null),
                 _ => null
             };
             return Identifier<T>.Between(IOption<Identifier<T>>.From(lowId), highId, value);
@@ -63,7 +66,8 @@ namespace CRDT.Library.Sequence
         {
             var highId = lowId switch
             {
-                Some<Identifier<T>>(var lid) => list.GetViewBetween(list.Min, lid).FirstOrDefault(id => id?.CompareTo(lid) < 0, null),
+                Some<Identifier<T>>(var lid) => list.GetViewBetween(list.Min, lid)
+                    .FirstOrDefault(id => id?.CompareTo(lid) < 0, null),
                 _ => null
             };
             return Identifier<T>.Between(lowId, IOption<Identifier<T>>.From(highId), value);

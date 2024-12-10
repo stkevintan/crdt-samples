@@ -2,13 +2,11 @@ using CRDT.Library.Common;
 
 namespace CRDT.Set
 {
-
     class ORSet<T> where T : notnull
     {
         private readonly Dictionary<T, VClock> _addSet = new();
         private readonly Dictionary<T, VClock> _removeSet = new();
 
-    
 
         public void Add(T element, int node)
         {
@@ -20,7 +18,7 @@ namespace CRDT.Set
 
         public void Remove(T element, int node)
         {
-            _removeSet[element] ??= new ();
+            _removeSet[element] ??= new();
             _removeSet[element].Increment(node);
             // safe to remove element
             _addSet.Remove(element);
@@ -28,7 +26,7 @@ namespace CRDT.Set
 
         public bool Contains(T element)
         {
-           return (_addSet.Find(element), _removeSet.Find(element)) switch
+            return (_addSet.Find(element), _removeSet.Find(element)) switch
             {
                 (Some<VClock>(var add), Some<VClock>(var rem)) => VClock.HappenedBefore(rem, add),
                 (Some<VClock> add, _) => true,
@@ -69,6 +67,7 @@ namespace CRDT.Set
                     _ => false
                 };
             }
+
             foreach (var (key, rem) in _removeSet)
             {
                 _ = _addSet.Find(key) switch

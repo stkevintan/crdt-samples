@@ -2,7 +2,7 @@
 
 namespace CRDT.Library.Common
 {
-    class VTime : GCounter
+    internal class VTime : GCounter
     {
         public ICollection<int> Keys => _counters.Keys;
 
@@ -27,6 +27,7 @@ namespace CRDT.Library.Common
     public class VClock
     {
         private readonly VTime vTime = new();
+
         public void Increment(int node)
         {
             vTime.Increment(node);
@@ -39,7 +40,6 @@ namespace CRDT.Library.Common
 
         public Ord Compare(VClock other)
         {
-
             return vTime.Keys.Union(other.vTime.Keys).Aggregate(Ord.Eq, (acc, k) =>
             {
                 var value1 = vTime.GetOrDefault(k);
@@ -53,7 +53,6 @@ namespace CRDT.Library.Common
                     _ => acc
                 };
             });
-
         }
 
         public static bool HappenedBefore(VClock v1, VClock v2)
