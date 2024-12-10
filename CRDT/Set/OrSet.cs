@@ -1,26 +1,24 @@
+using System.Collections;
 using CRDT.Common;
 
 namespace CRDT.Set;
 
-class OrSet<T> where T : notnull
+public class OrSet<T> : IEnumerable<T> where T : notnull
 {
     private readonly Dictionary<T, VClock> _addSet = new();
     private readonly Dictionary<T, VClock> _removeSet = new();
 
-
     public void Add(T element, int node)
     {
-        _addSet[element] ??= new();
-        _addSet[element].Increment(node);
-        // safe to remove element
+        _addSet.GetOrDefault(element).Increment(node);
+        // safe to remove element, because we refreshed the record in _addSet
         _removeSet.Remove(element);
     }
 
     public void Remove(T element, int node)
     {
-        _removeSet[element] ??= new();
-        _removeSet[element].Increment(node);
-        // safe to remove element
+        _removeSet.GetOrDefault(element).Increment(node);
+        // safe to remove element, because we refreshed the record in _removeSet
         _addSet.Remove(element);
     }
 
@@ -34,28 +32,17 @@ class OrSet<T> where T : notnull
         };
     }
 
-    public IEnumerable<T> Query()
-    {
-        return _addSet.Where(kvp => _removeSet.Find(kvp.Key) switch
-        {
-            Some<VClock>(var rem) => VClock.HappenedBefore(rem, kvp.Value),
-            _ => true
-        }).Select(kvp => kvp.Key);
-    }
-
     public void Merge(OrSet<T> other)
     {
         // merge add and remove sets
         foreach (var kvp in other._addSet)
         {
-            _addSet[kvp.Key] ??= new();
-            _addSet[kvp.Key].Merge(kvp.Value);
+            _addSet.GetOrDefault(kvp.Key).Merge(kvp.Value);
         }
 
         foreach (var kvp in other._removeSet)
         {
-            _removeSet[kvp.Key] ??= new();
-            _removeSet[kvp.Key].Merge(kvp.Value);
+            _removeSet.GetOrDefault(kvp.Key).Merge(kvp.Value);
         }
 
         // Optimization: kick out elements that are lost
@@ -76,5 +63,19 @@ class OrSet<T> where T : notnull
                 _ => _addSet.Remove(key)
             };
         }
+    }
+
+    public IEnumerator<T> GetEnumerator()
+    {
+        return _addSet.Where(kvp => _removeSet.Find(kvp.Key) switch
+        {
+            Some<VClock>(var rem) => VClock.HappenedBefore(rem, kvp.Value),
+            _ => true
+        }).Select(kvp => kvp.Key).GetEnumerator();
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
     }
 }

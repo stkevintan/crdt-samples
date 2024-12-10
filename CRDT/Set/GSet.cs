@@ -4,6 +4,18 @@ public class GSet<T>
 {
     private readonly HashSet<T> _set = [];
 
+    public GSet(params T[] items)
+    {
+        foreach (var item in items)
+        {
+            Add(item);}
+    }
+
+    public GSet(GSet<T> gSet)
+    {
+        this._set = [..gSet._set];
+    }
+    
     public void Add(T element)
     {
         _set.Add(element);

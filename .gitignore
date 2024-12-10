@@ -2,3 +2,4 @@ obj/
 bin/
 .vs/
 TestResults
+CRDT.Net.sln.DotSettings.user

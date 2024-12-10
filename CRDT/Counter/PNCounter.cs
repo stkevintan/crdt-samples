@@ -2,16 +2,10 @@ namespace CRDT.Counter;
 
 public class PNCounter
 {
-    private readonly GCounter _positive;
+    private readonly GCounter _positive = new();
 
     // tombstone
-    private readonly GCounter _negative;
-
-    public PNCounter()
-    {
-        _positive = new GCounter();
-        _negative = new GCounter();
-    }
+    private readonly GCounter _negative = new();
 
     public void Increment(int node)
     {

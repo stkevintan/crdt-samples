@@ -1,10 +1,26 @@
+using System.Collections;
+
 namespace CRDT.Set;
 
-class TwoPSet<T>
+public class TwoPSet<T>
 {
     private readonly GSet<T> _addSet = new();
 
     private readonly GSet<T> _removeSet = new();
+
+    public TwoPSet(params T[] items)
+    {
+        foreach (var item in items)
+        {
+            Add(item);
+        }
+    }
+
+    public TwoPSet(TwoPSet<T> twoPSet)
+    {
+        _addSet = new GSet<T>(twoPSet._addSet);
+        _removeSet = new GSet<T>(twoPSet._removeSet);
+    }
 
     public void Add(T element)
     {
